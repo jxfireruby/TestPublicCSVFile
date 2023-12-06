@@ -5,11 +5,32 @@
 # map source result
 # Change to a 7 rows,3 column 2-d array instead of naming each map.
 import re
-def calculate_map(start_value, map_used):
-    for map in map_used:
+def calculate_map(start_value, array_map):
+    array_map.sort()
+    for map in array_map:
         if start_value >= map[0] and start_value < map[0] + map[2]:
-            #print("start", start_value, map[0], map[0] + map[2])
             return start_value + (map[1] - map[0])
+            
+    low = 0
+    high = len(array_map) - 1
+    mid = 0
+    while low <= high:
+ 
+        mid = (high + low) // 2
+ 
+        # If x is greater, ignore left half
+        if array_map[mid][0] < start_value and  start_value >= array_map[0] + array_map[2]:
+            low = mid + 1
+ 
+        # If x is smaller, ignore right half
+        elif array_map[mid][0] > start_value:
+            high = mid - 1
+ 
+        # means x is present at mid
+        else:
+            return start_value + (array_map[mid][1] - array_map[mid][0])
+ 
+    # If we reach here, then the element was not present
     return start_value
 
 def somethine(file_name):
@@ -112,23 +133,24 @@ def somethine(file_name):
             split_line = line.split()
             seed_ranges = split_line[1:]
             starting_seed_range = int(len(seed_ranges) / 2)
-            for i in range(starting_seed_range):
-                print(i, starting_seed_range)
-                seed_start = int(seed_ranges[2*i])
-                seed_range = int(seed_ranges[2*i + 1])
-                for seed in range(seed_start, seed_start + seed_range):
-                    soil = calculate_map(seed, seed_soil_map)
-                    fert = calculate_map(soil, soil_fert_map)
-                    water = calculate_map(fert, fert_water_map)
-                    light = calculate_map(water, water_light_map)
-                    temp = calculate_map(light, light_temp_map)
-                    humid = calculate_map(temp, temp_humid_map)
-                    loc = calculate_map(humid, humid_loc_map)
-                    #print(seed, soil, fert, water, light, temp,humid, loc)
-                    if lowest == -1:
-                        lowest = loc
-                    elif loc < lowest:
-                        lowest = loc
+            input_for_i = input("give i, max 9:")
+            i = int(input_for_i)
+            print(i, starting_seed_range)
+            seed_start = int(seed_ranges[2*i])
+            seed_range = int(seed_ranges[2*i + 1])
+            for seed in range(seed_start, seed_start + seed_range):
+                soil = calculate_map(seed, seed_soil_map)
+                fert = calculate_map(soil, soil_fert_map)
+                water = calculate_map(fert, fert_water_map)
+                light = calculate_map(water, water_light_map)
+                temp = calculate_map(light, light_temp_map)
+                humid = calculate_map(temp, temp_humid_map)
+                loc = calculate_map(humid, humid_loc_map)
+                #print(seed, soil, fert, water, light, temp,humid, loc)
+                if lowest == -1:
+                    lowest = loc
+                elif loc < lowest:
+                    lowest = loc
             break
     print(lowest)
 somethine('input.txt')
